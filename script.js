@@ -90,6 +90,7 @@ class Game {
         let reset = document.querySelector('.reset')
         reset.addEventListener('click', () => {
             this.draw()
+            this.targetItem = document.querySelector('.target')
         })
 
         let next = document.querySelector('.btn-next')
