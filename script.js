@@ -1,11 +1,12 @@
 class Game {
     constructor() {
-        this.level = 3
+        this.level = 4
         this.arr = []
         this.target = this.level*this.level
         this.targetItem = document.querySelector('.target')
         this.randomArr = []
         this.score = 0
+        this.steps = 0
     }
     createArr(){
         this.arr = []
@@ -19,10 +20,11 @@ class Game {
             return Math.random() - 0.5;
         });
         this.arr.push(0)
+        this.randomArr.push(0)
         console.log(this.randomArr)
     }
     draw() {
-        console.log(this.target)
+        this.steps = 0
         this.createArr()
         this.createRandomArr()
         let body = document.getElementById('app')
@@ -36,7 +38,7 @@ class Game {
         body.children[0].insertAdjacentHTML('beforeend', `<div class="target" draggable = "true" title="${this.target}"></div>`)
         body.children[0].insertAdjacentHTML('afterEnd', '<div class="btns"><div class="reset">RESET</div> <div class="btn-prev">prev LEVEL</div> <div class="btn-next">next LEVEL</div></div>')
         body.children[0].insertAdjacentHTML('afterEnd', '<div class="time"></div>')
-        body.children[0].insertAdjacentHTML('beforeBegin', `<div class="score">your BEST score: <span>${this.score}</span></div>`)
+        body.children[0].insertAdjacentHTML('beforeBegin', `<div class="score">your BEST score: <span>${this.score}</span> Total steps: <span class="steps"></span></div>`)
         this.setTargetItem();
         this.listenTarget();
         this.listenBtns()
@@ -72,7 +74,7 @@ class Game {
             this.target = this.level*this.level
 
         } else {
-            alert('Are you crazy?')
+            alert('No, please, NO')
         }
 
     }
@@ -107,6 +109,12 @@ class Game {
         let listen = (event) => {
             this.switchCeils(event.relatedTarget)
         }
+        let ceil = document.querySelectorAll('.ceil')
+        ceil.forEach(c => {
+            c.addEventListener('click', (event) => {
+                this.switchCeils(event.toElement)
+            })
+        })
         this.targetItem.removeEventListener('dragenter', listen)
 
         this.targetItem.addEventListener('dragenter', listen)
@@ -130,12 +138,14 @@ class Game {
                 this.setTargetItem()
                 this.listenTarget()
                 this.setCurrentArr(num, text, oldTarget)
+                this.steps++
+                document.querySelector('.steps').innerHTML = this.steps
                 if(this.isFinish()) {
-                    alert('Great! You are WIN!!!')
+                    alert(`Great! You are WIN in ${this.steps} steps`)
                     let time = document.querySelector('.time')
                     this.score = time.innerHTML
+                    this.steps = 0
                     this.changeLevel()
-
                 }
             }
         }
